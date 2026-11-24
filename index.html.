@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#176b4d">
+<title>Dairy Manager V4</title>
+<style>
+:root{
+ --green:#176b4d;--green-dark:#11523b;--green2:#e8f4ee;
+ --bg:#f4f7f5;--ink:#18231e;--muted:#63706a;--line:#dfe6e2;--white:#fff;
+ --red:#b94343;--red-bg:#fff1f1;
+ --amber:#9a5b00;--amber-bg:#fff7e6;--amber-line:#f2d49b;
+ --blue:#1d5fa7;--blue-bg:#eef5fc;
+ --shadow:0 2px 10px rgba(24,35,30,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.4;padding-bottom:28px}
+header{background:linear-gradient(135deg,var(--green),var(--green-dark));color:#fff;padding:18px 16px 22px;border-radius:0 0 22px 22px;box-shadow:0 4px 14px rgba(23,107,77,.18)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-weight:800;font-size:21px;display:flex;align-items:center;gap:6px}
+.ver{font-size:11px;font-weight:700;background:#ffffff24;padding:2px 7px;border-radius:99px;vertical-align:middle}
+.sub{font-size:12px;opacity:.88;margin-top:4px}
+button,select,input,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:11px;padding:11px 14px;font-weight:700;min-height:44px;transition:transform .08s ease,opacity .15s ease}
+button:active{transform:scale(.98)}
+.lang{background:#ffffff22;color:#fff;border:1px solid #ffffff55;padding:8px 13px;min-height:38px;font-size:13px}
+main{max-width:760px;margin:auto;padding:14px}
+.welcome{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin:12px 0 10px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat,.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.stat small{color:var(--muted);font-size:12px;display:block}
+.stat strong{display:block;font-size:23px;margin-top:6px;line-height:1.15;word-break:break-word}
+.stat span{font-size:11.5px;color:var(--muted);display:block;margin-top:4px}
+.pnl-card{margin-top:10px;border-radius:16px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);background:var(--white);box-shadow:var(--shadow)}
+.pnl-card.profit{background:var(--green2);border-color:#c3e4d3;color:var(--green-dark)}
+.pnl-card.loss{background:var(--red-bg);border-color:#f0c6c6;color:var(--red)}
+.pnl-card .pnl-val{font-size:22px;font-weight:800;white-space:nowrap}
+.nav-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 8px;margin:6px -14px 0;padding-left:14px;padding-right:14px}
+.nav{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{white-space:nowrap;background:#e7ede9;color:#394a42;padding:9px 13px;min-height:40px;font-size:13.5px;border-radius:99px;flex-shrink:0}
+.nav button.active{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(23,107,77,.25)}
+.panel{margin-top:8px}
+.panel h2{font-size:17px;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{flex:1 1 auto}
+.primary{background:var(--green);color:#fff}
+.secondary{background:var(--green2);color:var(--green)}
+.ghost{background:#eef2f0;color:#394a42}
+.danger{background:var(--red-bg);color:var(--red)}
+.edit-btn{background:var(--blue-bg);color:var(--blue)}
+.sm-btn{padding:7px 11px;min-height:34px;font-size:12.5px;border-radius:8px}
+.item{padding:12px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:14px}
+.item:first-of-type{border-top:0;padding-top:4px}
+.item-main{min-width:0;flex:1}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.item-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.muted{color:var(--muted);font-size:12px;margin-top:3px}
+form{display:grid;gap:11px}
+label{font-size:13px;font-weight:700;color:#394a42}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d3ddd7;border-radius:11px;background:#fff;color:var(--ink);min-height:44px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(23,107,77,.12)}
+.field{display:grid;gap:5px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#394a42}
+.check-row input[type=checkbox]{width:20px;height:20px;min-height:20px;margin:0;accent-color:var(--green)}
+.empty{color:var(--muted);font-size:13px;padding:10px 0}
+.hidden{display:none!important}
+.banner{padding:11px 13px;border-radius:12px;font-size:13px;margin-bottom:12px;line-height:1.45}
+.banner.warn{background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber)}
+.banner.info{background:var(--blue-bg);border:1px solid #c9dff6;color:var(--blue)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle;margin-left:5px}
+.badge.dup{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-line)}
+.badge.due{background:var(--red-bg);color:var(--red)}
+.badge.ok{background:var(--green2);color:var(--green)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#edf2ef;padding:5px;border-radius:12px;margin-bottom:12px}
+.seg button{background:transparent;color:#405149;padding:8px 4px;min-height:38px;font-size:12.5px;border-radius:9px}
+.seg button.active{background:var(--white);color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sub-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#edf2ef;padding:5px;border-radius:12px;margin-bottom:14px}
+.sub-seg button{background:transparent;color:#405149;padding:8px 4px;min-height:38px;font-size:12.5px;border-radius:9px}
+.sub-seg button.active{background:var(--white);color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.period-note{font-size:12px;color:var(--muted);margin:-4px 0 12px}
+.restore-box{margin-top:12px;padding:12px;background:#f8faf9;border:1px solid var(--line);border-radius:12px}
+.bill-box{background:#fff;border:1px solid #cfd8d3;border-radius:14px;padding:16px;margin-top:14px}
+.bill-head{border-bottom:2px solid var(--green);padding-bottom:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.bill-table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.bill-table th,.bill-table td{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left}
+.bill-table th:last-child,.bill-table td:last-child{text-align:right}
+.bill-totals{margin-top:10px;padding-top:8px;border-top:2px solid var(--line);display:grid;gap:4px;font-size:14px}
+.bill-totals div{display:flex;justify-content:space-between}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(20px);background:#18231e;color:#fff;padding:11px 16px;border-radius:99px;font-size:13px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:50;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;color:var(--muted);font-size:11.5px;padding:22px 10px 8px}
+@media(min-width:600px){
+ .grid{grid-template-columns:repeat(4,1fr)}
+ header{padding-left:max(16px,calc((100% - 728px)/2));padding-right:max(16px,calc((100% - 728px)/2))}
+}
+@media print{
+ body{background:#fff;padding:0}
+ header,.welcome,.grid,.pnl-card,.nav-wrap,#home,#cows,#milk,#money,#health,#feed,#reports,footer,.toast,.no-print{display:none!important}
+ #customers{display:block!important;border:0;box-shadow:none;padding:0;margin:0}
+ #custSubAdd,#custSubSale,#custBillControls{display:none!important}
+ #custSubBill{display:block!important}
+ .bill-box{border:0;padding:0;margin:0}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div>
+   <div class="brand">🐄 Dairy Manager <span class="ver">V4</span></div>
+   <div class="sub" data-i="tagline">Smart Dairy Management</div>
+  </div>
+  <button class="lang" id="langBtn">हिंदी</button>
+ </div>
+ <div style="margin-top:18px;font-size:19px;font-weight:700" data-i="hello">Welcome to your dairy</div>
+ <div class="sub" id="dateLine"></div>
+</header>
+
+<main>
+ <div class="welcome" data-i="overview">Farm overview</div>
+ <section class="grid">
+  <div class="stat"><small data-i="totalCows">Total cows</small><strong id="cowCount">0</strong><span data-i="registered">Registered</span></div>
+  <div class="stat"><small data-i="todayMilk">Today's milk</small><strong id="milkTotal">0 L</strong><span data-i="morningEvening">Morning + evening</span></div>
+  <div class="stat"><small data-i="todayIncome">Today's income</small><strong id="incomeTotal">₹0</strong><span data-i="milkSales">Milk sales</span></div>
+  <div class="stat"><small data-i="todayExpense">Today's expense</small><strong id="expenseTotal">₹0</strong><span data-i="farmCosts">Farm costs</span></div>
+ </section>
+
+ <div id="todayPnlCard" class="pnl-card">
+  <div>
+   <div style="font-size:12px;opacity:.85;font-weight:700" data-i="todayPnl">Today's Profit / Loss</div>
+   <div id="todayPnlStatus" style="font-size:13px;margin-top:2px">—</div>
+  </div>
+  <div id="todayPnlVal" class="pnl-val">₹0</div>
+ </div>
+
+ <div class="nav-wrap">
+  <nav class="nav" id="nav">
+   <button class="active" data-tab="home" data-i="home">Home</button>
+   <button data-tab="cows" data-i="cows">Cows</button>
+   <button data-tab="milk" data-i="milk">Milk</button>
+   <button data-tab="customers" data-i="customers">Customers & Bills</button>
+   <button data-tab="feed" data-i="feed">Feed Stock</button>
+   <button data-tab="money" data-i="money">Income & expenses</button>
+   <button data-tab="health" data-i="health">Health</button>
+   <button data-tab="reports" data-i="reports">Reports</button>
+  </nav>
+ </div>
+
+ <!-- HOME -->
+ <section id="home" class="panel">
+  <div id="homeDupBanner" class="banner warn hidden"></div>
+  <div id="homeFeedBanner" class="banner warn hidden"></div>
+  <h2 data-i="quickActions">Quick actions</h2>
+  <div class="actions">
+   <button class="primary" data-go="milk" data-i="addMilk">+ Add milk record</button>
+   <button class="secondary" data-go="customers" data-i="logCustomerSale">+ Customer sale</button>
+   <button class="secondary" data-go="money" data-i="addExpense">+ Add expense</button>
+   <button class="ghost" data-go="feed" data-i="manageFeed">Feed stock</button>
+  </div>
+  <h2 style="margin-top:20px" data-i="recent">Recent activity</h2>
+  <div id="recentList" class="empty" data-i="noActivity">No records yet. Add your first record.</div>
+ </section>
+
+ <!-- COWS -->
+ <section id="cows" class="panel hidden">
+  <h2 data-i="cowManagement">Cow management</h2>
+  <form id="cowForm">
+   <div class="field"><label data-i="cowName">Cow name / ID</label><input name="name" required placeholder="e.g. Gauri / COW-01"></div>
+   <div class="form-row">
+    <div class="field"><label data-i="breed">Breed (optional)</label><input name="breed" placeholder="e.g. Sahiwal"></div>
+    <div class="field"><label data-i="age">Age in years (optional)</label><input name="age" type="number" inputmode="decimal" min="0" step="0.1"></div>
+   </div>
+   <button class="primary" data-i="saveCow">Save cow</button>
+  </form>
+  <h2 style="margin-top:22px" data-i="cowList">Cow list</h2>
+  <div id="cowList" class="empty">No cows added yet.</div>
+ </section>
+
+ <!-- MILK -->
+ <section id="milk" class="panel hidden">
+  <h2 data-i="milkRecords">Milk production record</h2>
+  <div id="milkEditBanner" class="banner info hidden"></div>
+  <form id="milkForm">
+   <div class="form-row">
+    <div class="field"><label data-i="date">Date</label><input name="date" id="milkDate" type="date" required></div>
+    <div class="field"><label data-i="session">Session</label>
+     <select name="session" id="milkSession">
+      <option value="Morning" data-i="morning">Morning</option>
+      <option value="Evening" data-i="evening">Evening</option>
+     </select>
+    </div>
+   </div>
+   <div class="form-row">
+    <div class="field"><label data-i="cow">Cow</label><select name="cow" id="milkCow" required><option value="">Select cow</option></select></div>
+    <div class="field"><label data-i="quantity">Milk quantity (litres)</label><input name="qty" id="milkQty" type="number" inputmode="decimal" min="0.1" step="0.1" required></div>
+   </div>
+   <div class="actions">
+    <button type="submit" class="primary" id="milkSubmitBtn" data-i="saveMilk">Save milk record</button>
+    <button type="button" class="ghost hidden" id="cancelMilkEditBtn" data-i="cancelEdit">Cancel edit</button>
+   </div>
+  </form>
+
+  <h2 style="margin-top:22px">
+   <span data-i="milkHistory">Milk history</span>
+   <span id="milkCountBadge" class="muted" style="font-weight:600"></span>
+  </h2>
+  <div id="milkDupBanner" class="banner warn hidden"></div>
+  <div id="milkList" class="empty">No milk records yet.</div>
+
+  <div class="field" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+   <label data-i="milkRate">Milk selling rate (₹ per litre)</label>
+   <input id="milkRate" type="number" inputmode="decimal" min="0" step="0.5" value="50">
+  </div>
+  <div class="muted" data-i="rateHint">Used only to estimate milk value; it does not create an income entry.</div>
+ </section>
+
+ <!-- CUSTOMERS & MONTHLY BILLS -->
+ <section id="customers" class="panel hidden">
+  <h2 class="no-print" data-i="customerTitle">Customer sales & monthly bills</h2>
+  <div class="sub-seg no-print" id="custSubSeg">
+   <button class="active" data-sub="sale" data-i="subSale">Daily Sale</button>
+   <button data-sub="add" data-i="subCustomers">Customers</button>
+   <button data-sub="bill" data-i="subBill">Monthly Bill</button>
+  </div>
+
+  <!-- Sub-tab: Daily Customer Sale -->
+  <div id="custSubSale">
+   <form id="saleForm">
+    <div class="form-row">
+     <div class="field"><label data-i="customer">Customer</label><select name="customer" id="saleCust" required><option value="">Select customer</option></select></div>
+     <div class="field"><label data-i="date">Date</label><input name="date" id="saleDate" type="date" required></div>
+    </div>
+    <div class="form-row">
+     <div class="field"><label data-i="quantity">Milk quantity (litres)</label><input name="qty" id="saleQty" type="number" inputmode="decimal" min="0.1" step="0.1" required></div>
+     <div class="field"><label data-i="ratePerL">Rate (₹ / L)</label><input name="rate" id="saleRate" type="number" inputmode="decimal" min="1" step="0.5" required></div>
+    </div>
+    <div class="form-row">
+     <div class="field"><label data-i="session">Session</label>
+      <select name="session">
+       <option value="Morning" data-i="morning">Morning</option>
+       <option value="Evening" data-i="evening">Evening</option>
+      </select>
+     </div>
+     <div class="field"><label data-i="paidNow">Paid now (₹)</label><input name="paid" id="salePaid" type="number" inputmode="decimal" min="0" step="1" value="0"></div>
+    </div>
+    <label class="check-row"><input type="checkbox" id="syncIncomeChk" checked><span data-i="syncIncomeLabel">Add paid amount to Income automatically</span></label>
+    <button class="primary" data-i="saveSale">Save customer sale</button>
+   </form>
+
+   <h2 style="margin-top:20px" data-i="recentSales">Recent customer sales</h2>
+   <div id="saleList" class="empty">No customer sales yet.</div>
+  </div>
+
+  <!-- Sub-tab: Customer List & Add -->
+  <div id="custSubAdd" class="hidden">
+   <form id="custForm">
+    <div class="field"><label data-i="customerName">Customer name</label><input name="name" required placeholder="e.g. Ramesh Sharma"></div>
+    <div class="form-row">
+     <div class="field"><label data-i="phone">Phone (optional)</label><input name="phone" type="tel" placeholder="e.g. 9876543210"></div>
+     <div class="field"><label data-i="ratePerL">Rate (₹ / L)</label><input name="rate" id="custDefaultRate" type="number" inputmode="decimal" min="1" step="0.5" value="50" required></div>
+    </div>
+    <div class="field"><label data-i="dailyDefault">Default daily litres (optional)</label><input name="dailyQty" type="number" inputmode="decimal" min="0" step="0.5" placeholder="e.g. 2"></div>
+    <button class="primary" data-i="saveCustomer">Save customer</button>
+   </form>
+   <h2 style="margin-top:20px" data-i="customerList">Customer list & dues</h2>
+   <div id="custList" class="empty">No customers added yet.</div>
+  </div>
+
+  <!-- Sub-tab: Monthly Print/PDF Bill -->
+  <div id="custSubBill" class="hidden">
+   <div id="custBillControls">
+    <div class="form-row">
+     <div class="field"><label data-i="customer">Customer</label><select id="billCust"><option value="">Select customer</option></select></div>
+     <div class="field"><label data-i="billMonth">Month</label><input id="billMonth" type="month"></div>
+    </div>
+    <div class="actions" style="margin-top:10px">
+     <button class="primary" id="printBillBtn" data-i="printPdf">Print / Save PDF</button>
+     <button class="secondary" id="copyBillBtn" data-i="copyBillText">Copy WhatsApp bill</button>
+    </div>
+   </div>
+   <div id="billPreview" class="bill-box empty">Select a customer to preview monthly bill.</div>
+  </div>
+ </section>
+
+ <!-- FEED STOCK INVENTORY -->
+ <section id="feed" class="panel hidden">
+  <h2 data-i="feedTitle">Feed & stock inventory</h2>
+  <form id="feedForm">
+   <div class="field"><label data-i="feedName">Feed item name</label><input name="name" required placeholder="e.g. Khal / Bhusa / Choker"></div>
+   <div class="form-row">
+    <div class="field"><label data-i="feedQty">Current stock</label><input name="qty" type="number" inputmode="decimal" min="0" step="0.5" required placeholder="e.g. 50"></div>
+    <div class="field"><label data-i="feedUnit">Unit</label>
+     <select name="unit">
+      <option value="kg">kg</option>
+      <option value="bags">bags</option>
+      <option value="quintal">quintal</option>
+     </select>
+    </div>
+   </div>
+   <div class="field"><label data-i="feedMin">Low stock alert below</label><input name="min" type="number" inputmode="decimal" min="0" step="0.5" value="10"></div>
+   <button class="primary" data-i="saveFeed">Add feed item</button>
+  </form>
+  <h2 style="margin-top:22px" data-i="feedListTitle">Current feed stock</h2>
+  <div id="feedList" class="empty">No feed items added yet.</div>
+ </section>
+
+ <!-- MONEY -->
+ <section id="money" class="panel hidden">
+  <h2 data-i="moneyRecords">Income & expense record</h2>
+  <form id="moneyForm">
+   <div class="form-row">
+    <div class="field"><label data-i="type">Record type</label>
+     <select name="type">
+      <option value="income" data-i="income">Income</option>
+      <option value="expense" data-i="expense">Expense</option>
+     </select>
+    </div>
+    <div class="field"><label data-i="amount">Amount (₹)</label><input name="amount" type="number" inputmode="decimal" min="1" step="0.01" required></div>
+   </div>
+   <div class="field"><label data-i="category">Description</label><input name="desc" required placeholder="e.g. Milk sale / cattle feed"></div>
+   <div class="field"><label data-i="date">Date</label><input name="date" type="date" required></div>
+   <button class="primary" data-i="saveRecord">Save record</button>
+  </form>
+  <h2 style="margin-top:22px" data-i="moneyHistory">Transaction history</h2>
+  <div id="moneyList" class="empty">No transactions yet.</div>
+ </section>
+
+ <!-- HEALTH -->
+ <section id="health" class="panel hidden">
+  <h2 data-i="healthRecords">Cow health record</h2>
+  <form id="healthForm">
+   <div class="form-row">
+    <div class="field"><label data-i="cow">Cow</label><select name="cow" id="healthCow" required><option value="">Select cow</option></select></div>
+    <div class="field"><label data-i="healthDate">Date</label><input name="date" type="date" required></div>
+   </div>
+   <div class="field"><label data-i="healthNote">Medicine / vaccination / note</label><input name="note" required placeholder="e.g. Vaccination due"></div>
+   <div class="field"><label data-i="nextDate">Next due date (optional)</label><input name="next" type="date"></div>
+   <button class="primary" data-i="saveHealth">Save health record</button>
+  </form>
+  <h2 style="margin-top:22px" data-i="healthHistory">Health history</h2>
+  <div id="healthList" class="empty">No health records yet.</div>
+ </section>
+
+ <!-- REPORTS & BACKUP -->
+ <section id="reports" class="panel hidden">
+  <h2 data-i="reportsTitle">Farm reports</h2>
+  <div class="seg" id="reportSeg">
+   <button class="active" data-period="daily" data-i="daily">Daily</button>
+   <button data-period="weekly" data-i="weekly">Weekly</button>
+   <button data-period="monthly" data-i="monthly">Monthly</button>
+   <button data-period="all" data-i="allTime">All time</button>
+  </div>
+  <div id="reportRangeNote" class="period-note"></div>
+
+  <div class="grid">
+   <div class="stat"><small data-i="periodMilk">Milk recorded</small><strong id="repMilk">0 L</strong><span id="repMilkCount">0 entries</span></div>
+   <div class="stat"><small data-i="estimatedValue">Estimated milk value</small><strong id="repMilkValue">₹0</strong><span id="repRateNote">₹50 / L</span></div>
+   <div class="stat"><small data-i="totalIncome">Total income</small><strong id="repIncome">₹0</strong></div>
+   <div class="stat"><small data-i="totalExpense">Total expenses</small><strong id="repExpense">₹0</strong></div>
+  </div>
+
+  <div id="repPnlCard" class="pnl-card" style="margin-top:12px">
+   <div>
+    <div style="font-size:12px;opacity:.85;font-weight:700" data-i="netProfitLoss">Net Profit / Loss</div>
+    <div id="repPnlStatus" style="font-size:13px;margin-top:2px">—</div>
+   </div>
+   <div id="repPnlVal" class="pnl-val">₹0</div>
+  </div>
+
+  <h2 style="margin-top:20px" data-i="cowPerformance">Cow-wise milk performance</h2>
+  <div id="cowPerformanceList" class="empty">No milk records yet.</div>
+
+  <h2 style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line)" data-i="backupTitle">Data backup & restore</h2>
+  <p class="muted" data-i="backupInfo">Download a dated backup file or copy backup text. Supports V2, V3 and V4 backups.</p>
+  <div id="lastBackupLine" class="muted" style="margin-bottom:10px;font-weight:700"></div>
+
+  <div class="actions">
+   <button class="primary" id="exportBtn" data-i="exportData">Download backup</button>
+   <button class="secondary" id="copyBackupBtn" data-i="copyBackup">Copy backup</button>
+  </div>
+
+  <div class="restore-box">
+   <div class="field" style="margin-bottom:10px">
+    <label data-i="restoreMode">Restore mode</label>
+    <select id="restoreMode">
+     <option value="merge" data-i="modeMerge">Safe merge (keep existing + add backup)</option>
+     <option value="replace" data-i="modeReplace">Replace all current data</option>
+    </select>
+   </div>
+   <div class="actions">
+    <button class="secondary" id="importBtn" data-i="importData">Restore from file</button>
+    <button class="ghost" id="togglePasteBtn" data-i="pasteBackup">Paste backup text</button>
+    <input id="importFile" type="file" accept="application/json,.json" class="hidden">
+   </div>
+   <div id="pasteWrap" class="hidden" style="margin-top:10px">
+    <textarea id="pasteInput" rows="4" placeholder='{"version":4,...}'></textarea>
+    <button class="primary" id="restorePasteBtn" style="margin-top:8px;width:100%" data-i="restoreNow">Restore pasted data</button>
+   </div>
+   <p class="muted" style="margin-bottom:0" data-i="backupWarning">Keep backups private. Safe merge preserves existing records and skips exact duplicates.</p>
+  </div>
+ </section>
+
+ <footer data-i="localNote">Dairy Manager V4 • Offline-ready on Android Brave Browser. Download regular backups to keep records safe.</footer>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+function localDateStr(d=new Date()){
+ const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+ return `${y}-${m}-${day}`;
+}
+const today=localDateStr();
+const currentMonth=today.slice(0,7);
+
+// Preserves all V2 & V3 keys + adds V4 keys
+const keys={
+ cows:'dm_cows',milk:'dm_milk',money:'dm_money',health:'dm_health',
+ customers:'dm_customers',sales:'dm_sales',feed:'dm_feed'
+};
+const read=k=>{try{const v=JSON.parse(localStorage.getItem(keys[k])||'[]');return Array.isArray(v)?v:[]}catch(e){return []}};
+const save=(k,v)=>localStorage.setItem(keys[k],JSON.stringify(v));
+
+let lang=localStorage.getItem('dm_lang')==='hi'?'hi':'en';
+let reportPeriod='daily';
+let custSub='sale';
+let editingMilkIndex=null;
+let toastTimer=null;
+
+const words={
+en:{
+ tagline:'Smart Dairy Management',hello:'Welcome to your dairy',overview:'Farm overview',
+ totalCows:'Total cows',registered:'Registered',todayMilk:"Today's milk",morningEvening:'Morning + evening',
+ todayIncome:"Today's income",milkSales:'Milk sales',todayExpense:"Today's expense",farmCosts:'Farm costs',
+ todayPnl:"Today's Profit / Loss",netProfitLoss:'Net Profit / Loss',profit:'Profit',loss:'Loss',breakeven:'Break-even',
+ home:'Home',cows:'Cows',milk:'Milk',customers:'Customers & Bills',feed:'Feed Stock',money:'Income & expenses',health:'Health',reports:'Reports',
+ quickActions:'Quick actions',addCow:'+ Add cow',addMilk:'+ Add milk record',logCustomerSale:'+ Customer sale',addExpense:'+ Add expense',manageFeed:'Feed stock',
+ recent:'Recent activity',noActivity:'No records yet. Add your first record.',
+ cowManagement:'Cow management',cowName:'Cow name / ID',breed:'Breed (optional)',age:'Age in years (optional)',saveCow:'Save cow',cowList:'Cow list',
+ milkRecords:'Milk production record',date:'Date',cow:'Cow',session:'Session',morning:'Morning',evening:'Evening',
+ quantity:'Milk quantity (litres)',saveMilk:'Save milk record',updateMilk:'Update milk record',cancelEdit:'Cancel edit',
+ milkHistory:'Milk history',milkRate:'Milk selling rate (₹ per litre)',rateHint:'Used only to estimate milk value; it does not create an income entry.',
+ customerTitle:'Customer sales & monthly bills',subSale:'Daily Sale',subCustomers:'Customers',subBill:'Monthly Bill',
+ customer:'Customer',selectCustomer:'Select customer',ratePerL:'Rate (₹ / L)',paidNow:'Paid now (₹)',
+ syncIncomeLabel:'Add paid amount to Income automatically',saveSale:'Save customer sale',recentSales:'Recent customer sales',
+ customerName:'Customer name',phone:'Phone (optional)',dailyDefault:'Default daily litres (optional)',saveCustomer:'Save customer',
+ customerList:'Customer list & dues',billMonth:'Month',printPdf:'Print / Save PDF',copyBillText:'Copy WhatsApp bill',
+ noCustomers:'No customers added yet. Add a customer in the Customers tab first.',noSales:'No customer sales yet.',
+ due:'Due',settled:'Settled',receivePay:'+ Payment',billCopied:'Bill text copied for WhatsApp',
+ feedTitle:'Feed & stock inventory',feedName:'Feed item name',feedQty:'Current stock',feedUnit:'Unit',feedMin:'Low stock alert below',
+ saveFeed:'Add feed item',feedListTitle:'Current feed stock',noFeed:'No feed items added yet.',lowStock:'Low stock',inStock:'In stock',
+ addStock:'+ Add',useStock:'− Use',
+ moneyRecords:'Income & expense record',type:'Record type',income:'Income',expense:'Expense',amount:'Amount (₹)',category:'Description',saveRecord:'Save record',moneyHistory:'Transaction history',
+ healthRecords:'Cow health record',healthDate:'Date',healthNote:'Medicine / vaccination / note',nextDate:'Next due date (optional)',saveHealth:'Save health record',healthHistory:'Health history',
+ reportsTitle:'Farm reports',daily:'Daily',weekly:'Weekly',monthly:'Monthly',allTime:'All time',
+ periodMilk:'Milk recorded',estimatedValue:'Estimated milk value',totalIncome:'Total income',totalExpense:'Total expenses',cowPerformance:'Cow-wise milk performance',
+ backupTitle:'Data backup & restore',backupInfo:'Download a dated backup file or copy backup text. Supports V2, V3 and V4 backups.',
+ exportData:'Download backup',copyBackup:'Copy backup',restoreMode:'Restore mode',
+ modeMerge:'Safe merge (keep existing + add backup)',modeReplace:'Replace all current data',
+ importData:'Restore from file',pasteBackup:'Paste backup text',restoreNow:'Restore pasted data',
+ backupWarning:'Keep backups private. Safe merge preserves existing records and skips exact duplicates.',
+ localNote:'Dairy Manager V4 • Offline-ready on Android Brave Browser. Download regular backups to keep records safe.',
+ selectCow:'Select cow',edit:'Edit',delete:'Delete',duplicate:'Duplicate',saved:'Record saved',updated:'Record updated',deleted:'Record deleted',
+ noCows:'No cows added yet.',noMilk:'No milk records yet.',noMoney:'No transactions yet.',noHealth:'No health records yet.',
+ entries:'entries',lastBackup:'Last backup:',noBackupYet:'No backup downloaded yet.',
+ editingNote:'Editing milk record — make your changes and tap Update.',
+ dupBanner:(n)=>`⚠️ ${n} duplicate milk entries found (same cow, date & session). Edit or delete extras below.`,
+ feedBanner:(items)=>`⚠️ Low feed stock: ${items.join(', ')}`,
+ dupConfirm:(cow,date,sess,qty)=>`Duplicate detected!\n${cow} already has a ${sess} milk record on ${date} (${qty} L).\n\nSave this entry anyway?`,
+ delConfirm:'Delete this record?',
+ backupCopied:'Backup copied to clipboard',backupDownloaded:'Backup file downloaded',
+ invalidBackup:'This backup file is not valid JSON.',
+ restored:'Backup restored successfully',dueToday:'Due soon / overdue',next:'Next'
+},
+hi:{
+ tagline:'स्मार्ट डेयरी मैनेजमेंट',hello:'आपके डेयरी फार्म में स्वागत है',overview:'फार्म का सारांश',
+ totalCows:'कुल गायें',registered:'रजिस्टर्ड',todayMilk:'आज का दूध',morningEvening:'सुबह + शाम',
+ todayIncome:'आज की आमदनी',milkSales:'दूध की बिक्री',todayExpense:'आज का खर्च',farmCosts:'फार्म का खर्च',
+ todayPnl:'आज का लाभ / हानि',netProfitLoss:'कुल लाभ / हानि',profit:'लाभ (Profit)',loss:'हानि (Loss)',breakeven:'बराबर (₹0)',
+ home:'होम',cows:'गायें',milk:'दूध',customers:'ग्राहक और बिल',feed:'चारा स्टॉक',money:'आमदनी और खर्च',health:'स्वास्थ्य',reports:'रिपोर्ट',
+ quickActions:'जल्दी काम करें',addCow:'+ गाय जोड़ें',addMilk:'+ दूध का रिकॉर्ड',logCustomerSale:'+ ग्राहक बिक्री',addExpense:'+ खर्च जोड़ें',manageFeed:'चारा स्टॉक',
+ recent:'हाल की गतिविधि',noActivity:'अभी कोई रिकॉर्ड नहीं है। पहला रिकॉर्ड जोड़ें।',
+ cowManagement:'गायों का प्रबंधन',cowName:'गाय का नाम / ID',breed:'नस्ल (वैकल्पिक)',age:'उम्र साल में (वैकल्पिक)',saveCow:'गाय सेव करें',cowList:'गायों की सूची',
+ milkRecords:'दूध उत्पादन रिकॉर्ड',date:'तारीख',cow:'गाय',session:'समय',morning:'सुबह',evening:'शाम',
+ quantity:'दूध की मात्रा (लीटर)',saveMilk:'दूध रिकॉर्ड सेव करें',updateMilk:'दूध रिकॉर्ड अपडेट करें',cancelEdit:'रद्द करें',
+ milkHistory:'दूध का इतिहास',milkRate:'दूध बेचने का रेट (₹ प्रति लीटर)',rateHint:'इससे केवल दूध की अनुमानित कीमत निकलेगी; आमदनी का रिकॉर्ड अपने आप नहीं बनेगा।',
+ customerTitle:'ग्राहक दूध बिक्री और मासिक बिल',subSale:'रोज की बिक्री',subCustomers:'ग्राहक सूची',subBill:'मासिक बिल',
+ customer:'ग्राहक',selectCustomer:'ग्राहक चुनें',ratePerL:'रेट (₹ / लीटर)',paidNow:'अभी जमा (₹)',
+ syncIncomeLabel:'जमा रकम को अपने आप आमदनी में जोड़ें',saveSale:'बिक्री सेव करें',recentSales:'हाल की ग्राहक बिक्री',
+ customerName:'ग्राहक का नाम',phone:'मोबाइल नंबर (वैकल्पिक)',dailyDefault:'रोज का दूध लीटर (वैकल्पिक)',saveCustomer:'ग्राहक सेव करें',
+ customerList:'ग्राहक सूची और बकाया',billMonth:'महीना',printPdf:'प्रिंट / PDF सेव करें',copyBillText:'WhatsApp बिल कॉपी करें',
+ noCustomers:'अभी कोई ग्राहक नहीं है। पहले ग्राहक सूची में नाम जोड़ें।',noSales:'अभी कोई ग्राहक बिक्री नहीं है।',
+ due:'बकाया',settled:'जमा पूरा',receivePay:'+ पेमेंट लें',billCopied:'WhatsApp बिल कॉपी हो गया',
+ feedTitle:'चारा और स्टॉक इन्वेंटरी',feedName:'चारे का नाम',feedQty:'मौजूदा स्टॉक',feedUnit:'इकाई',feedMin:'कम स्टॉक अलर्ट सीमा',
+ saveFeed:'चारा जोड़ें',feedListTitle:'मौजूदा चारा स्टॉक',noFeed:'अभी कोई चारा स्टॉक नहीं जोड़ा गया।',lowStock:'स्टॉक कम है',inStock:'पर्याप्त',
+ addStock:'+ जोड़ें',useStock:'− खर्च करें',
+ moneyRecords:'आमदनी और खर्च का रिकॉर्ड',type:'रिकॉर्ड का प्रकार',income:'आमदनी',expense:'खर्च',amount:'रकम (₹)',category:'विवरण',saveRecord:'रिकॉर्ड सेव करें',moneyHistory:'लेन-देन का इतिहास',
+ healthRecords:'गाय के स्वास्थ्य का रिकॉर्ड',healthDate:'तारीख',healthNote:'दवा / टीकाकरण / नोट',nextDate:'अगली तारीख (वैकल्पिक)',saveHealth:'स्वास्थ्य रिकॉर्ड सेव करें',healthHistory:'स्वास्थ्य का इतिहास',
+ reportsTitle:'फार्म रिपोर्ट',daily:'दैनिक',weekly:'साप्ताहिक',monthly:'मासिक',allTime:'सभी',
+ periodMilk:'दर्ज दूध',estimatedValue:'अनुमानित दूध कीमत',totalIncome:'कुल आमदनी',totalExpense:'कुल खर्च',cowPerformance:'हर गाय का दूध उत्पादन',
+ backupTitle:'डेटा बैकअप और रिस्टोर',backupInfo:'तारीख वाली बैकअप फाइल डाउनलोड करें या टेक्स्ट कॉपी करें। V2, V3 और V4 सभी बैकअप चलते हैं।',
+ exportData:'बैकअप डाउनलोड करें',copyBackup:'बैकअप कॉपी करें',restoreMode:'रिस्टोर का तरीका',
+ modeMerge:'सुरक्षित मर्ज (पुराना डेटा रखें + नया जोड़ें)',modeReplace:'मौजूदा पूरा डेटा बदलें',
+ importData:'फाइल से वापस लाएं',pasteBackup:'टेक्स्ट पेस्ट करें',restoreNow:'पेस्ट किया डेटा रिस्टोर करें',
+ backupWarning:'बैकअप निजी रखें। सुरक्षित मर्ज से मौजूदा रिकॉर्ड नहीं हटते।',
+ localNote:'डेयरी मैनेजर V4 • Android Brave Browser में ऑफलाइन चलता है। सुरक्षित रहने के लिए नियमित बैकअप लें।',
+ selectCow:'गाय चुनें',edit:'बदलें',delete:'हटाएं',duplicate:'डुप्लिकेट',saved:'रिकॉर्ड सेव हो गया',updated:'रिकॉर्ड अपडेट हो गया',deleted:'रिकॉर्ड हटा दिया गया',
+ noCows:'अभी कोई गाय नहीं जोड़ी गई।',noMilk:'अभी दूध का रिकॉर्ड नहीं है।',noMoney:'अभी कोई लेन-देन नहीं है।',noHealth:'अभी स्वास्थ्य रिकॉर्ड नहीं है।',
+ entries:'एंट्री',lastBackup:'आखिरी बैकअप:',noBackupYet:'अभी कोई बैकअप डाउनलोड नहीं हुआ।',
+ editingNote:'दूध का रिकॉर्ड बदला जा रहा है — बदलाव करके अपडेट बटन दबाएं।',
+ dupBanner:(n)=>`⚠️ ${n} डुप्लिकेट दूध एंट्री मिली हैं (एक ही गाय, तारीख और समय)। नीचे से बदलें या हटाएं।`,
+ feedBanner:(items)=>`⚠️ चारा स्टॉक कम है: ${items.join(', ')}`,
+ dupConfirm:(cow,date,sess,qty)=>`डुप्लिकेट एंट्री मिली!\n${cow} का ${date} (${sess}) का ${qty} L रिकॉर्ड पहले से मौजूद है।\n\nक्या फिर भी सेव करना है?`,
+ delConfirm:'क्या यह रिकॉर्ड हटाना है?',
+ backupCopied:'बैकअप कॉपी हो गया',backupDownloaded:'बैकअप फाइल डाउनलोड हो गई',
+ invalidBackup:'यह बैकअप फाइल सही नहीं है।',
+ restored:'बैकअप सफलतापूर्वक वापस आ गया',dueToday:'जल्द या बाकी',next:'अगली तारीख'
+}
+};
+
+function t(k){return words[lang][k]||k}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){
+ const num=Number(n||0);
+ const sign=num<0?'−':'';
+ return sign+'₹'+Math.abs(num).toLocaleString('en-IN',{maximumFractionDigits:2});
+}
+function toast(msg){
+ const el=$('#toast');
+ el.textContent=msg;
+ el.classList.add('show');
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>el.classList.remove('show'),2400);
+}
+function dateSet(){
+ document.querySelectorAll('input[type=date]').forEach(x=>{if(!x.value)x.value=today});
+ if(!$('#billMonth').value)$('#billMonth').value=currentMonth;
+}
+function tab(id){
+ document.querySelectorAll('main section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+}
+function setCustSub(sub){
+ custSub=sub;
+ document.querySelectorAll('#custSubSeg button').forEach(b=>b.classList.toggle('active',b.dataset.sub===sub));
+ $('#custSubSale').classList.toggle('hidden',sub!=='sale');
+ $('#custSubAdd').classList.toggle('hidden',sub!=='add');
+ $('#custSubBill').classList.toggle('hidden',sub!=='bill');
+ if(sub==='bill')renderBill();
+}
+
+function milkKey(x){
+ return `${(x.date||'').trim()}|${(x.cow||'').trim().toLowerCase()}|${(x.session||'').trim().toLowerCase()}`;
+}
+function getDuplicateKeys(milk){
+ const counts={};
+ milk.forEach(x=>{const k=milkKey(x);counts[k]=(counts[k]||0)+1;});
+ return new Set(Object.keys(counts).filter(k=>counts[k]>1));
+}
+function translateSession(s){
+ if(s==='Morning')return t('morning');
+ if(s==='Evening')return t('evening');
+ return s;
+}
+
+function getPeriodRange(period){
+ const now=new Date();
+ if(period==='daily')return {start:today,end:today,label:today};
+ if(period==='weekly'){
+  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
+  const start=localDateStr(d);
+  return {start,end:today,label:`${start} → ${today}`};
+ }
+ if(period==='monthly'){
+  const start=`${today.slice(0,7)}-01`;
+  const monthLabel=now.toLocaleDateString(lang==='hi'?'hi-IN':'en-IN',{month:'long',year:'numeric'});
+  return {start,end:today,label:monthLabel};
+ }
+ return {start:null,end:null,label:t('allTime')};
+}
+function inRange(dateStr,range){
+ if(!range.start)return true;
+ return dateStr>=range.start && dateStr<=range.end;
+}
+
+function renderPnlCard(cardEl,statusEl,valEl,income,expense){
+ const net=income-expense;
+ cardEl.classList.remove('profit','loss');
+ if(net>0){
+  cardEl.classList.add('profit');
+  const margin=income>0?` (${Math.round((net/income)*100)}%)`:'';
+  statusEl.textContent=t('profit')+margin;
+  valEl.textContent='+'+money(net);
+ }else if(net<0){
+  cardEl.classList.add('loss');
+  statusEl.textContent=t('loss');
+  valEl.textContent=money(net);
+ }else{
+  statusEl.textContent=t('breakeven');
+  valEl.textContent='₹0';
+ }
+}
+
+function resetMilkEdit(){
+ editingMilkIndex=null;
+ $('#milkForm').reset();
+ $('#milkDate').value=today;
+ $('#milkSubmitBtn').textContent=t('saveMilk');
+ $('#cancelMilkEditBtn').classList.add('hidden');
+ $('#milkEditBanner').classList.add('hidden');
+}
+
+function getCustomerBalance(custName,sales){
+ const rows=sales.filter(s=>s.customer===custName);
+ const billed=rows.reduce((a,s)=>a+(Number(s.qty||0)*Number(s.rate||0)),0);
+ const paid=rows.reduce((a,s)=>a+Number(s.paid||0),0);
+ return {billed,paid,due:billed-paid};
+}
+
+function buildBillData(){
+ const custName=$('#billCust').value;
+ const month=$('#billMonth').value||currentMonth;
+ if(!custName)return null;
+ const customers=read('customers');
+ const sales=read('sales');
+ const cust=customers.find(c=>c.name===custName)||{name:custName,phone:''};
+ const rows=sales.filter(s=>s.customer===custName && (s.date||'').startsWith(month)).sort((a,b)=>a.date.localeCompare(b.date));
+ const totalQty=rows.reduce((a,s)=>a+Number(s.qty||0),0);
+ const totalAmt=rows.reduce((a,s)=>a+(Number(s.qty||0)*Number(s.rate||0)),0);
+ const totalPaid=rows.reduce((a,s)=>a+Number(s.paid||0),0);
+ return {cust,month,rows,totalQty,totalAmt,totalPaid,due:totalAmt-totalPaid};
+}
+
+function renderBill(){
+ const data=buildBillData();
+ const el=$('#billPreview');
+ if(!data){
+  el.className='bill-box empty';
+  el.textContent=lang==='hi'?'मासिक बिल देखने के लिए ग्राहक चुनें।':'Select a customer to preview monthly bill.';
+  return;
+ }
+ el.className='bill-box';
+ const rowsHtml=data.rows.length?data.rows.map(r=>{
+  const amt=Number(r.qty||0)*Number(r.rate||0);
+  return `<tr><td>${esc(r.date)}</td><td>${esc(translateSession(r.session))}</td><td>${Number(r.qty||0).toFixed(1)} L</td><td>${money(amt)}</td></tr>`;
+ }).join(''):`<tr><td colspan="4" class="muted">${lang==='hi'?'इस महीने कोई बिक्री दर्ज नहीं है।':'No sales recorded for this month.'}</td></tr>`;
+
+ el.innerHTML=`
+  <div class="bill-head">
+   <div>
+    <div style="font-weight:800;font-size:17px;color:var(--green)">🐄 Dairy Manager</div>
+    <div class="muted">${lang==='hi'?'मासिक दूध बिल':'Monthly Milk Bill'} • ${esc(data.month)}</div>
+   </div>
+   <div style="text-align:right">
+    <b>${esc(data.cust.name)}</b>
+    ${data.cust.phone?`<div class="muted">${esc(data.cust.phone)}</div>`:''}
+   </div>
+  </div>
+  <table class="bill-table">
+   <thead><tr><th>${t('date')}</th><th>${t('session')}</th><th>${lang==='hi'?'मात्रा':'Qty'}</th><th>${lang==='hi'?'रकम':'Amount'}</th></tr></thead>
+   <tbody>${rowsHtml}</tbody>
+  </table>
+  <div class="bill-totals">
+   <div><span>${lang==='hi'?'कुल दूध':'Total Milk'}</span><b>${data.totalQty.toFixed(1)} L</b></div>
+   <div><span>${lang==='hi'?'कुल बिल':'Total Bill'}</span><b>${money(data.totalAmt)}</b></div>
+   <div><span>${lang==='hi'?'जमा रकम':'Paid'}</span><b>${money(data.totalPaid)}</b></div>
+   <div style="color:${data.due>0?'var(--red)':'var(--green)'};font-size:16px"><span>${lang==='hi'?'बकाया (Balance Due)':'Balance Due'}</span><b>${money(data.due)}</b></div>
+  </div>`;
+}
+
+function render(){
+ const cows=read('cows'), milk=read('milk'), moneyRows=read('money'), health=read('health');
+ const customers=read('customers'), sales=read('sales'), feed=read('feed');
+ const rate=Number(localStorage.getItem('dm_milk_rate')||50);
+
+ // Top KPI cards
+ $('#cowCount').textContent=cows.length;
+ const todayMilk=milk.filter(x=>x.date===today).reduce((a,x)=>a+Number(x.qty||0),0);
+ const todayInc=moneyRows.filter(x=>x.date===today&&x.type==='income').reduce((a,x)=>a+Number(x.amount||0),0);
+ const todayExp=moneyRows.filter(x=>x.date===today&&x.type==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+ $('#milkTotal').textContent=todayMilk.toFixed(1)+' L';
+ $('#incomeTotal').textContent=money(todayInc);
+ $('#expenseTotal').textContent=money(todayExp);
+ renderPnlCard($('#todayPnlCard'),$('#todayPnlStatus'),$('#todayPnlVal'),todayInc,todayExp);
+
+ // Duplicate detection banner
+ const dupKeys=getDuplicateKeys(milk);
+ const dupCount=milk.filter(x=>dupKeys.has(milkKey(x))).length;
+ if(dupCount>0){
+  const msg=words[lang].dupBanner(dupCount);
+  $('#milkDupBanner').textContent=msg;
+  $('#milkDupBanner').classList.remove('hidden');
+  $('#homeDupBanner').textContent=msg;
+  $('#homeDupBanner').classList.remove('hidden');
+ }else{
+  $('#milkDupBanner').classList.add('hidden');
+  $('#homeDupBanner').classList.add('hidden');
+ }
+
+ // Low feed stock alert on Home
+ const lowFeeds=feed.filter(f=>Number(f.qty||0)<=Number(f.min||0));
+ if(lowFeeds.length>0){
+  $('#homeFeedBanner').textContent=words[lang].feedBanner(lowFeeds.map(f=>`${f.name} (${f.qty} ${f.unit})`));
+  $('#homeFeedBanner').classList.remove('hidden');
+ }else{
+  $('#homeFeedBanner').classList.add('hidden');
+ }
+
+ // Cows list & dropdowns
+ $('#cowList').innerHTML=cows.length?cows.map((c,i)=>`
+  <div class="item">
+   <div class="item-main">
+    <b>${esc(c.name)}</b>
+    <div class="muted">${esc(c.breed||'—')}${c.age?' • '+esc(c.age)+' yrs':''}</div>
+   </div>
+   <div class="item-right">
+    <button class="danger sm-btn" onclick="del('cows',${i})">${t('delete')}</button>
+   </div>
+  </div>`).join(''):`<div class="empty">${t('noCows')}</div>`;
+
+ const prevMilkCow=$('#milkCow').value, prevHealthCow=$('#healthCow').value;
+ const cowNames=cows.map(c=>c.name);
+ const opts='<option value="">'+t('selectCow')+'</option>'+cowNames.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+ $('#milkCow').innerHTML=opts;
+ $('#healthCow').innerHTML=opts;
+ if(prevMilkCow && cowNames.includes(prevMilkCow))$('#milkCow').value=prevMilkCow;
+ if(prevHealthCow && cowNames.includes(prevHealthCow))$('#healthCow').value=prevHealthCow;
+
+ // Milk list
+ $('#milkCountBadge').textContent=milk.length?`${milk.length} ${t('entries')}`:'';
+ const indexedMilk=milk.map((x,idx)=>({x,idx})).reverse();
+ $('#milkList').innerHTML=indexedMilk.length?indexedMilk.slice(0,50).map(({x,idx})=>{
+  const isDup=dupKeys.has(milkKey(x));
+  return `<div class="item">
+   <div class="item-main">
+    <b>${esc(x.cow)} • ${esc(translateSession(x.session))}</b>${isDup?`<span class="badge dup">${t('duplicate')}</span>`:''}
+    <div class="muted">${esc(x.date)}</div>
+   </div>
+   <div class="item-right">
+    <b>${Number(x.qty||0).toFixed(1)} L</b>
+    <div class="item-btns">
+     <button class="edit-btn sm-btn" onclick="editMilk(${idx})">${t('edit')}</button>
+     <button class="danger sm-btn" onclick="del('milk',${idx})">${t('delete')}</button>
+    </div>
+   </div>
+  </div>`;
+ }).join(''):`<div class="empty">${t('noMilk')}</div>`;
+
+ // Customers dropdowns & lists
+ const prevSaleCust=$('#saleCust').value, prevBillCust=$('#billCust').value;
+ const custOpts='<option value="">'+t('selectCustomer')+'</option>'+customers.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+ $('#saleCust').innerHTML=custOpts;
+ $('#billCust').innerHTML=custOpts;
+ if(prevSaleCust && customers.some(c=>c.name===prevSaleCust))$('#saleCust').value=prevSaleCust;
+ if(prevBillCust && customers.some(c=>c.name===prevBillCust))$('#billCust').value=prevBillCust;
+ if(!$('#saleRate').value)$('#saleRate').value=rate;
+ $('#custDefaultRate').value=rate;
+
+ $('#custList').innerHTML=customers.length?customers.map((c,i)=>{
+  const bal=getCustomerBalance(c.name,sales);
+  return `<div class="item">
+   <div class="item-main">
+    <b>${esc(c.name)}</b><span class="badge ${bal.due>0?'due':'ok'}">${bal.due>0?`${t('due')}: ${money(bal.due)}`:t('settled')}</span>
+    <div class="muted">₹${esc(c.rate||rate)}/L${c.dailyQty?' • '+esc(c.dailyQty)+' L/day':''}${c.phone?' • '+esc(c.phone):''}</div>
+   </div>
+   <div class="item-right">
+    <div class="item-btns">
+     ${bal.due>0?`<button class="secondary sm-btn" onclick="receivePayment(${i})">${t('receivePay')}</button>`:''}
+     <button class="danger sm-btn" onclick="del('customers',${i})">${t('delete')}</button>
+    </div>
+   </div>
+  </div>`;
+ }).join(''):`<div class="empty">${t('noCustomers')}</div>`;
+
+ const indexedSales=sales.map((x,idx)=>({x,idx})).reverse();
+ $('#saleList').innerHTML=indexedSales.length?indexedSales.slice(0,40).map(({x,idx})=>{
+  const total=Number(x.qty||0)*Number(x.rate||0);
+  const paid=Number(x.paid||0);
+  const isPayOnly=Number(x.qty||0)===0 && paid>0;
+  return `<div class="item">
+   <div class="item-main">
+    <b>${esc(x.customer)}${isPayOnly?' • Payment':` • ${Number(x.qty||0).toFixed(1)} L (${translateSession(x.session)})`}</b>
+    <div class="muted">${esc(x.date)}${isPayOnly?'':` • ₹${x.rate}/L • Paid ${money(paid)}`}</div>
+   </div>
+   <div class="item-right">
+    <b>${isPayOnly?'+'+money(paid):money(total)}</b>
+    <button class="danger sm-btn" onclick="del('sales',${idx})">${t('delete')}</button>
+   </div>
+  </div>`;
+ }).join(''):`<div class="empty">${t('noSales')}</div>`;
+ if(custSub==='bill')renderBill();
+
+ // Feed stock list
+ $('#feedList').innerHTML=feed.length?feed.map((f,i)=>{
+  const isLow=Number(f.qty||0)<=Number(f.min||0);
+  return `<div class="item">
+   <div class="item-main">
+    <b>${esc(f.name)}</b><span class="badge ${isLow?'due':'ok'}">${isLow?t('lowStock'):t('inStock')}</span>
+    <div class="muted">${lang==='hi'?'अलर्ट सीमा':'Alert below'}: ${esc(f.min||0)} ${esc(f.unit)} • ${esc(f.updated||today)}</div>
+   </div>
+   <div class="item-right">
+    <b>${Number(f.qty||0).toFixed(1)} ${esc(f.unit)}</b>
+    <div class="item-btns">
+     <button class="secondary sm-btn" onclick="adjustFeed(${i},1)">${t('addStock')}</button>
+     <button class="edit-btn sm-btn" onclick="adjustFeed(${i},-1)">${t('useStock')}</button>
+     <button class="danger sm-btn" onclick="del('feed',${i})">${t('delete')}</button>
+    </div>
+   </div>
+  </div>`;
+ }).join(''):`<div class="empty">${t('noFeed')}</div>`;
+
+ // Money list
+ const indexedMoney=moneyRows.map((x,idx)=>({x,idx})).reverse();
+ $('#moneyList').innerHTML=indexedMoney.length?indexedMoney.slice(0,50).map(({x,idx})=>`
+  <div class="item">
+   <div class="item-main">
+    <b>${esc(x.desc)}</b>
+    <div class="muted">${esc(x.date)} • ${t(x.type)}</div>
+   </div>
+   <div class="item-right">
+    <b style="color:${x.type==='income'?'#176b4d':'#b94343'}">${x.type==='income'?'+':'−'}${money(x.amount)}</b>
+    <button class="danger sm-btn" onclick="del('money',${idx})">${t('delete')}</button>
+   </div>
+  </div>`).join(''):`<div class="empty">${t('noMoney')}</div>`;
+
+ // Health list
+ const indexedHealth=health.map((x,idx)=>({x,idx})).reverse();
+ $('#healthList').innerHTML=indexedHealth.length?indexedHealth.slice(0,50).map(({x,idx})=>{
+  const isDue=x.next && x.next<=today;
+  return `<div class="item">
+   <div class="item-main">
+    <b>${esc(x.cow)} • ${esc(x.note)}</b>${isDue?`<span class="badge due">${t('dueToday')}</span>`:''}
+    <div class="muted">${esc(x.date)}${x.next?` • ${t('next')}: ${esc(x.next)}`:''}</div>
+   </div>
+   <div class="item-right">
+    <button class="danger sm-btn" onclick="del('health',${idx})">${t('delete')}</button>
+   </div>
+  </div>`;
+ }).join(''):`<div class="empty">${t('noHealth')}</div>`;
+
+ // Recent activity
+ const activity=[
+  ...milk.map(x=>({date:x.date||'',text:`🥛 ${x.cow}: ${Number(x.qty||0).toFixed(1)} L (${translateSession(x.session)})`})),
+  ...sales.map(x=>({date:x.date||'',text:`👤 ${x.customer}: ${Number(x.qty||0)>0?`${Number(x.qty).toFixed(1)} L`:`Paid ${money(x.paid)}`}`})),
+  ...moneyRows.map(x=>({date:x.date||'',text:`${x.type==='income'?'💰':'🧾'} ${x.desc}: ${money(x.amount)}`})),
+  ...health.map(x=>({date:x.date||'',text:`💉 ${x.cow}: ${x.note}`}))
+ ].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+ $('#recentList').innerHTML=activity.length?activity.map(x=>`
+  <div class="item"><span>${esc(x.text)}</span><span class="muted" style="white-space:nowrap">${esc(x.date)}</span></div>`).join(''):`<div class="empty">${t('noActivity')}</div>`;
+
+ // Reports
+ const range=getPeriodRange(reportPeriod);
+ $('#reportRangeNote').textContent=range.label;
+ const fMilk=milk.filter(x=>inRange(x.date||'',range));
+ const fMoney=moneyRows.filter(x=>inRange(x.date||'',range));
+ const repMilkSum=fMilk.reduce((a,x)=>a+Number(x.qty||0),0);
+ const repInc=fMoney.filter(x=>x.type==='income').reduce((a,x)=>a+Number(x.amount||0),0);
+ const repExp=fMoney.filter(x=>x.type==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+
+ $('#repMilk').textContent=repMilkSum.toFixed(1)+' L';
+ $('#repMilkCount').textContent=`${fMilk.length} ${t('entries')}`;
+ $('#repMilkValue').textContent=money(repMilkSum*rate);
+ $('#repRateNote').textContent=`₹${rate} / L`;
+ $('#repIncome').textContent=money(repInc);
+ $('#repExpense').textContent=money(repExp);
+ $('#milkRate').value=rate;
+ renderPnlCard($('#repPnlCard'),$('#repPnlStatus'),$('#repPnlVal'),repInc,repExp);
+
+ const cowSet=new Set([...cows.map(c=>c.name),...fMilk.map(m=>m.cow)]);
+ const perf=[...cowSet].filter(Boolean).map(name=>{
+  const rows=fMilk.filter(x=>x.cow===name);
+  const qty=rows.reduce((a,x)=>a+Number(x.qty||0),0);
+  return {name,qty,count:rows.length};
+ }).sort((a,b)=>b.qty-a.qty);
+ $('#cowPerformanceList').innerHTML=perf.length?perf.map(c=>`
+  <div class="item">
+   <div><b>${esc(c.name)}</b><div class="muted">${c.count} ${t('entries')}</div></div>
+   <b>${c.qty.toFixed(1)} L</b>
+  </div>`).join(''):`<div class="empty">${t('noMilk')}</div>`;
+
+ const lastBk=localStorage.getItem('dm_last_backup');
+ $('#lastBackupLine').textContent=lastBk?`${t('lastBackup')} ${new Date(lastBk).toLocaleString(lang==='hi'?'hi-IN':'en-IN')}`:t('noBackupYet');
+}
+
+window.editMilk=(idx)=>{
+ const milk=read('milk');
+ const rec=milk[idx];
+ if(!rec)return;
+ editingMilkIndex=idx;
+ tab('milk');
+ const sel=$('#milkCow');
+ if(![...sel.options].some(o=>o.value===rec.cow)){
+  const opt=document.createElement('option');
+  opt.value=rec.cow;opt.textContent=rec.cow;sel.appendChild(opt);
+ }
+ $('#milkDate').value=rec.date||today;
+ $('#milkCow').value=rec.cow||'';
+ $('#milkSession').value=rec.session||'Morning';
+ $('#milkQty').value=rec.qty||'';
+ $('#milkSubmitBtn').textContent=t('updateMilk');
+ $('#cancelMilkEditBtn').classList.remove('hidden');
+ $('#milkEditBanner').textContent=t('editingNote');
+ $('#milkEditBanner').classList.remove('hidden');
+ $('#milk').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+window.receivePayment=(custIdx)=>{
+ const customers=read('customers');
+ const c=customers[custIdx];
+ if(!c)return;
+ const bal=getCustomerBalance(c.name,read('sales'));
+ const msg=lang==='hi'?`${c.name} से कितनी रकम मिली? (बकाया: ₹${bal.due})`:`Amount received from ${c.name}? (Due: ₹${bal.due})`;
+ const raw=prompt(msg,String(Math.max(0,Math.round(bal.due))));
+ if(raw===null)return;
+ const amt=Number(raw);
+ if(!Number.isFinite(amt)||amt<=0)return;
+ const sales=read('sales');
+ sales.push({customer:c.name,date:today,qty:'0',rate:String(c.rate||50),session:'Payment',paid:String(amt)});
+ save('sales',sales);
+ const moneyRows=read('money');
+ moneyRows.push({type:'income',amount:String(amt),desc:`Milk payment - ${c.name}`,date:today});
+ save('money',moneyRows);
+ render();
+ toast(t('saved'));
+};
+
+window.adjustFeed=(idx,dir)=>{
+ const feed=read('feed');
+ const f=feed[idx];
+ if(!f)return;
+ const msg=dir>0
+  ?(lang==='hi'?`${f.name} में कितना ${f.unit} जोड़ना है?`:`How many ${f.unit} of ${f.name} to add?`)
+  :(lang==='hi'?`${f.name} में से कितना ${f.unit} खर्च हुआ?`:`How many ${f.unit} of ${f.name} used?`);
+ const raw=prompt(msg,'5');
+ if(raw===null)return;
+ const delta=Number(raw);
+ if(!Number.isFinite(delta)||delta<=0)return;
+ f.qty=String(Math.max(0,Number(f.qty||0)+(dir*delta)));
+ f.updated=today;
+ save('feed',feed);
+ render();
+ toast(t('updated'));
+};
+
+window.del=(k,i)=>{
+ if(!confirm(t('delConfirm')))return;
+ const a=read(k);
+ a.splice(i,1);
+ save(k,a);
+ if(k==='milk' && editingMilkIndex!==null)resetMilkEdit();
+ render();
+ toast(t('deleted'));
+};
+
+function formData(form){
+ const obj=Object.fromEntries(new FormData(form).entries());
+ Object.keys(obj).forEach(k=>{if(typeof obj[k]==='string')obj[k]=obj[k].trim()});
+ return obj;
+}
+
+$('#cowForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('cows');a.push(x);save('cows',a);
+ e.target.reset();render();toast(t('saved'));
+});
+
+$('#milkForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('milk');
+ const key=milkKey(x);
+ const existing=a.find((m,idx)=>idx!==editingMilkIndex && milkKey(m)===key);
+ if(existing){
+  const ok=confirm(words[lang].dupConfirm(x.cow,x.date,translateSession(x.session),Number(existing.qty||0).toFixed(1)));
+  if(!ok)return;
+ }
+ if(editingMilkIndex!==null){
+  a[editingMilkIndex]=x;save('milk',a);resetMilkEdit();render();toast(t('updated'));
+ }else{
+  a.push(x);save('milk',a);e.target.reset();dateSet();render();toast(t('saved'));
+ }
+});
+$('#cancelMilkEditBtn').addEventListener('click',resetMilkEdit);
+
+$('#custForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('customers');
+ a.push(x);save('customers',a);
+ e.target.reset();render();toast(t('saved'));
+});
+
+$('#saleCust').addEventListener('change',e=>{
+ const c=read('customers').find(x=>x.name===e.target.value);
+ if(c){
+  if(c.rate)$('#saleRate').value=c.rate;
+  if(c.dailyQty)$('#saleQty').value=c.dailyQty;
+ }
+});
+
+$('#saleForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('sales');a.push(x);save('sales',a);
+ const paid=Number(x.paid||0);
+ if(paid>0 && $('#syncIncomeChk').checked){
+  const m=read('money');
+  m.push({type:'income',amount:String(paid),desc:`Milk sale - ${x.customer}`,date:x.date});
+  save('money',m);
+ }
+ e.target.reset();$('#salePaid').value='0';dateSet();render();toast(t('saved'));
+});
+
+$('#billCust').addEventListener('change',renderBill);
+$('#billMonth').addEventListener('change',renderBill);
+$('#printBillBtn').addEventListener('click',()=>{
+ if(!buildBillData())return toast(t('selectCustomer'));
+ window.print();
+});
+$('#copyBillBtn').addEventListener('click',async()=>{
+ const data=buildBillData();
+ if(!data)return toast(t('selectCustomer'));
+ const text=`🐄 *Dairy Manager - Monthly Bill*\nCustomer: ${data.cust.name}\nMonth: ${data.month}\nTotal Milk: ${data.totalQty.toFixed(1)} L\nTotal Bill: ${money(data.totalAmt)}\nPaid: ${money(data.totalPaid)}\n*Balance Due: ${money(data.due)}*`;
+ try{await navigator.clipboard.writeText(text);toast(t('billCopied'));}
+ catch(err){prompt('Copy bill:',text);}
+});
+
+$('#feedForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ x.updated=today;
+ const a=read('feed');a.push(x);save('feed',a);
+ e.target.reset();render();toast(t('saved'));
+});
+
+$('#moneyForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('money');a.push(x);save('money',a);
+ e.target.reset();dateSet();render();toast(t('saved'));
+});
+
+$('#healthForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const x=formData(e.target);
+ const a=read('health');a.push(x);save('health',a);
+ e.target.reset();dateSet();render();toast(t('saved'));
+});
+
+$('#nav').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-tab]');
+ if(b)tab(b.dataset.tab);
+});
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.go)));
+$('#custSubSeg').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-sub]');
+ if(b)setCustSub(b.dataset.sub);
+});
+$('#reportSeg').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-period]');
+ if(!b)return;
+ reportPeriod=b.dataset.period;
+ document.querySelectorAll('#reportSeg button').forEach(x=>x.classList.toggle('active',x===b));
+ render();
+});
+$('#milkRate').addEventListener('change',e=>{
+ localStorage.setItem('dm_milk_rate',String(Math.max(0,Number(e.target.value)||0)));
+ render();
+});
+
+// Backup & Restore (V2 + V3 + V4 compatible)
+function buildBackupObject(){
+ return {
+  version:4,
+  exportedAt:new Date().toISOString(),
+  cows:read('cows'),
+  milk:read('milk'),
+  money:read('money'),
+  health:read('health'),
+  customers:read('customers'),
+  sales:read('sales'),
+  feed:read('feed'),
+  milkRate:Number(localStorage.getItem('dm_milk_rate')||50)
+ };
+}
+
+$('#exportBtn').addEventListener('click',()=>{
+ const data=buildBackupObject();
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download=`dairy-manager-backup-${today}.json`;
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+ localStorage.setItem('dm_last_backup',data.exportedAt);
+ render();toast(t('backupDownloaded'));
+});
+
+$('#copyBackupBtn').addEventListener('click',async()=>{
+ const data=buildBackupObject();
+ const txt=JSON.stringify(data,null,2);
+ try{
+  await navigator.clipboard.writeText(txt);
+  localStorage.setItem('dm_last_backup',data.exportedAt);
+  render();toast(t('backupCopied'));
+ }catch(err){
+  $('#pasteWrap').classList.remove('hidden');
+  $('#pasteInput').value=txt;$('#pasteInput').select();
+  toast(t('backupCopied'));
+ }
+});
+
+function mergeUnique(existing,incoming){
+ const seen=new Set(existing.map(x=>JSON.stringify(x)));
+ const out=[...existing];
+ incoming.forEach(item=>{
+  const sig=JSON.stringify(item);
+  if(!seen.has(sig)){seen.add(sig);out.push(item);}
+ });
+ return out;
+}
+
+function applyBackupText(rawText){
+ try{
+  const data=JSON.parse(rawText);
+  if(!data||!Array.isArray(data.cows)||!Array.isArray(data.milk)||!Array.isArray(data.money)||!Array.isArray(data.health)){
+   throw new Error('Invalid');
+  }
+  const incCust=Array.isArray(data.customers)?data.customers:[];
+  const incSales=Array.isArray(data.sales)?data.sales:[];
+  const incFeed=Array.isArray(data.feed)?data.feed:[];
+  const mode=$('#restoreMode').value;
+  const summary=lang==='hi'
+   ? `बैकअप विवरण:\n• गायें: ${data.cows.length}\n• दूध: ${data.milk.length}\n• आमदनी/खर्च: ${data.money.length}\n• स्वास्थ्य: ${data.health.length}\n• ग्राहक: ${incCust.length} | बिक्री: ${incSales.length}\n• चारा स्टॉक: ${incFeed.length}\n\n${mode==='merge'?'क्या पुराने डेटा में इसे जोड़ें?':'क्या मौजूदा पूरा डेटा बदलें?'}`
+   : `Backup summary:\n• Cows: ${data.cows.length}\n• Milk: ${data.milk.length}\n• Money: ${data.money.length}\n• Health: ${data.health.length}\n• Customers: ${incCust.length} | Sales: ${incSales.length}\n• Feed items: ${incFeed.length}\n\n${mode==='merge'?'Merge with existing records?':'Replace all current records?'}`;
+  if(!confirm(summary))return;
+
+  if(mode==='merge'){
+   save('cows',mergeUnique(read('cows'),data.cows));
+   save('milk',mergeUnique(read('milk'),data.milk));
+   save('money',mergeUnique(read('money'),data.money));
+   save('health',mergeUnique(read('health'),data.health));
+   save('customers',mergeUnique(read('customers'),incCust));
+   save('sales',mergeUnique(read('sales'),incSales));
+   save('feed',mergeUnique(read('feed'),incFeed));
+  }else{
+   save('cows',data.cows);save('milk',data.milk);save('money',data.money);save('health',data.health);
+   save('customers',incCust);save('sales',incSales);save('feed',incFeed);
+  }
+  if(Number.isFinite(Number(data.milkRate)))localStorage.setItem('dm_milk_rate',String(data.milkRate));
+  resetMilkEdit();render();toast(t('restored'));
+ }catch(err){
+  alert(t('invalidBackup'));
+ }
+}
+
+$('#importBtn').addEventListener('click',()=>$('#importFile').click());
+$('#importFile').addEventListener('change',e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>applyBackupText(String(reader.result||''));
+ reader.onerror=()=>alert(t('invalidBackup'));
+ reader.readAsText(file);
+ e.target.value='';
+});
+$('#togglePasteBtn').addEventListener('click',()=>$('#pasteWrap').classList.toggle('hidden'));
+$('#restorePasteBtn').addEventListener('click',()=>{
+ const txt=$('#pasteInput').value.trim();
+ if(!txt)return;
+ applyBackupText(txt);
+ $('#pasteInput').value='';$('#pasteWrap').classList.add('hidden');
+});
+
+function setLang(){
+ localStorage.setItem('dm_lang',lang);
+ document.documentElement.lang=lang;
+ document.querySelectorAll('[data-i]').forEach(el=>{
+  const k=el.dataset.i;
+  if(typeof words[lang][k]==='string')el.textContent=words[lang][k];
+ });
+ $('#langBtn').textContent=lang==='en'?'हिंदी':'English';
+ $('#dateLine').textContent=new Date().toLocaleDateString(lang==='hi'?'hi-IN':'en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ if(editingMilkIndex!==null){
+  $('#milkSubmitBtn').textContent=t('updateMilk');
+  $('#milkEditBanner').textContent=t('editingNote');
+ }
+ render();
+}
+$('#langBtn').addEventListener('click',()=>{lang=lang==='en'?'hi':'en';setLang()});
+
+dateSet();
+setLang();
+</script>
+</body>
+</html>
